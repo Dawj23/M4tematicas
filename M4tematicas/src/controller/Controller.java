@@ -11,8 +11,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import modelo.Categoria;
 import modelo.Conexion;
 
 /**
@@ -74,8 +77,8 @@ public class Controller {
 
         String sql = "Select * From tbl_estoc inner join tbl_producte on tbl_estoc.prod_id=tbl_producte.prod_id inner join tbl_categoria on tbl_producte.categoria_id=tbl_categoria.categoria_id ";
         Statement st = null;
-        String vectorProducto[] = new String[4];
-        String vectorProducto1[] = new String[4];
+        String vectorProducto[] = new String[8];
+        String vectorProducto1[] = new String[8];
         vectorProducto1[0] = "prod_id";
         vectorProducto1[1] = "prod_nom";
         vectorProducto1[2] = "prod_preu";
@@ -113,4 +116,32 @@ public class Controller {
 
         return muestra;
     }
+  
+   public void llenarCombo(JComboBox box){
+        DefaultComboBoxModel value;
+        Conexion conectar = new Conexion();
+        Connection cn = conectar.conec();
+
+        String sql = "Select * From tbl_categoria";
+        Statement st = null;
+        ResultSet rs=null;
+
+        try {
+            st = cn.createStatement();
+             //JOptionPane.showMessageDialog(null, "Conexion viento en popa2");
+            rs = st.executeQuery(sql);
+             // JOptionPane.showMessageDialog(null, "Conexion viento en popa2");
+            value=new DefaultComboBoxModel();
+            box.setModel(value);
+            while (rs.next()) {
+            
+             value.addElement(new Categoria(rs.getInt("categoria_id"),rs.getString("categoria_nom")));
+            
+            }
+            cn.close();
+        } catch (SQLException ex) {
+             JOptionPane.showMessageDialog(null, "Conexion erronea");
+          
+        }
+}
 }
